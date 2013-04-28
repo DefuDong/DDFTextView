@@ -225,16 +225,23 @@
     
     //draw touch
     if (_isTouching) {
-        CGContextRef contex = UIGraphicsGetCurrentContext();
+//        CGContextRef contex = UIGraphicsGetCurrentContext();
+//        UIColor *fillColor = [UIColor colorWithWhite:0 alpha:.3];
+//        NSArray *touchRects = _atRects[_atRectIndex];
+//        for (NSValue *va in touchRects) {
+//            CGRect rect = [va CGRectValue];
+//            CGContextAddRect(contex, rect);
+//            CGContextSetFillColorWithColor(contex, fillColor.CGColor);
+//        }
+//        CGContextDrawPath(contex, kCGPathFill);
         UIColor *fillColor = [UIColor colorWithWhite:0 alpha:.3];
+        [fillColor setFill];
         NSArray *touchRects = _atRects[_atRectIndex];
         for (NSValue *va in touchRects) {
             CGRect rect = [va CGRectValue];
-            CGContextAddRect(contex, rect);
-            CGContextSetFillColorWithColor(contex, fillColor.CGColor);
+            UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:3];
+            [path fill];
         }
-        CGContextDrawPath(contex, kCGPathFill);
-        return;
     }
     
     _needAddRects = NO;
