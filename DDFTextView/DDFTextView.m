@@ -165,62 +165,62 @@
     int atIndex = 0;
     
     for (int i = 0; i < lenght; i++) {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        [_textColor set];
-        
-        //image
-        if (_faceRanges.count) {
-            NSRange faceRange = [_faceRanges[faceIndex] rangeValue];
-            if (i == faceRange.location) {
-                if (drawPoint.x + cHeight > width) {
-                    drawPoint.x = 0;
-                    drawPoint.y += cHeight;
+        @autoreleasepool {
+            [_textColor set];
+            
+            //image
+            if (_faceRanges.count) {
+                NSRange faceRange = [_faceRanges[faceIndex] rangeValue];
+                if (i == faceRange.location) {
+                    if (drawPoint.x + cHeight > width) {
+                        drawPoint.x = 0;
+                        drawPoint.y += cHeight;
+                    }
+                    NSString *name = [_text substringWithRange:NSMakeRange(faceRange.location+1, faceRange.length-2)];
+                    UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png", name]];
+                    [image drawInRect:CGRectMake(drawPoint.x, drawPoint.y, cHeight, cHeight)];
+                    drawPoint.x += cHeight;
+                    
+                    i += faceRange.length-1;
+                    if (faceIndex < _faceRanges.count-1) {
+                        faceIndex++;
+                    }
+                    continue;
                 }
-                NSString *name = [_text substringWithRange:NSMakeRange(faceRange.location+1, faceRange.length-2)];
-                UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png", name]];
-                [image drawInRect:CGRectMake(drawPoint.x, drawPoint.y, cHeight, cHeight)];
-                drawPoint.x += cHeight;
-                
-                i += faceRange.length-1;
-                if (faceIndex < _faceRanges.count-1) {
-                    faceIndex++;
-                }
-                continue;
             }
-        }
-        
-        //text
-        NSString *aString = [_text substringWithRange:NSMakeRange(i, 1)];
-        CGSize size = [aString sizeWithFont:_font];
-        
-        if (drawPoint.x + size.width > width) {
-            drawPoint.x = 0;
-            drawPoint.y += cHeight;
-        }
-        CGRect rect = CGRectMake(drawPoint.x, drawPoint.y, size.width, size.height);
-        
-        //@text
-        if (_atRanges.count) {
-            NSRange atRange = [_atRanges[atIndex] rangeValue];
-            if (NSLocationInRange(i, atRange)) {
-                [_atTextColor set];
-                //////add rects
-                if (_needAddRects) {
-                    [self addRect:rect index:atIndex];
-                }
-                
-                if (i == atRange.location+atRange.length-1) {
-                    if (atIndex < _atRanges.count-1) {
-                        atIndex++;
+            
+            //text
+            NSString *aString = [_text substringWithRange:NSMakeRange(i, 1)];
+            CGSize size = [aString sizeWithFont:_font];
+            
+            if (drawPoint.x + size.width > width) {
+                drawPoint.x = 0;
+                drawPoint.y += cHeight;
+            }
+            CGRect rect = CGRectMake(drawPoint.x, drawPoint.y, size.width, size.height);
+            
+            //@text
+            if (_atRanges.count) {
+                NSRange atRange = [_atRanges[atIndex] rangeValue];
+                if (NSLocationInRange(i, atRange)) {
+                    [_atTextColor set];
+                    //////add rects
+                    if (_needAddRects) {
+                        [self addRect:rect index:atIndex];
+                    }
+                    
+                    if (i == atRange.location+atRange.length-1) {
+                        if (atIndex < _atRanges.count-1) {
+                            atIndex++;
+                        }
                     }
                 }
             }
+            
+            [aString drawInRect:rect withFont:_font];
+            drawPoint.x += size.width;
         }
         
-        [aString drawInRect:rect withFont:_font];
-        drawPoint.x += size.width;
-        
-        [pool release];
     }
     
     //draw touch
